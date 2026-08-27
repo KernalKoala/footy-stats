@@ -78,10 +78,7 @@ async function fetchFromApi<T>(endpoint: string, params: Record<string, string> 
       throw new FootyStatsError("FootyStats API rate limit exceeded", 429);
     }
     if (response.status === 417) {
-      throw new FootyStatsError(
-        "This league/season is not available on your subscription",
-        403
-      );
+      throw new FootyStatsError("This league/season is not available on your subscription", 403);
     }
     throw new FootyStatsError(
       `FootyStats API error: ${response.status} ${response.statusText}`,
