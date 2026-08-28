@@ -3,9 +3,10 @@ import { getTeam, getPlayerStats, FootyStatsError } from "@/lib/footystats/servi
 
 export const dynamic = "force-dynamic";
 
-export async function GET(request: Request, { params }: { params: { id: string } }) {
+export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const teamId = Number(params.id);
+    const { id } = await params;
+    const teamId = Number(id);
 
     if (isNaN(teamId)) {
       return NextResponse.json({ error: "Invalid team ID" }, { status: 400 });
