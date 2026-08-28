@@ -167,16 +167,29 @@ function transformStandingsEntry(raw: any, index: number): StandingsEntry {
   };
 }
 
+const CDN_BASE_URL = "https://cdn.footystats.org/img/";
+
+/**
+ * Resolve a FootyStats image reference to an absolute URL.
+ * The match-schedule endpoint returns relative paths (e.g. "teams/foo.png"),
+ * whereas other endpoints return full CDN URLs. Normalize both to absolute.
+ */
+function resolveImageUrl(raw: string | undefined | null): string {
+  if (!raw) return "";
+  if (/^https?:\/\//i.test(raw)) return raw;
+  return `${CDN_BASE_URL}${raw.replace(/^\/+/, "")}`;
+}
+
 function transformMatch(raw: any): Match {
   return {
     id: raw.id || raw.match_id,
     leagueId: raw.competition_id || raw.league_id || 0,
     homeTeamId: raw.homeID || raw.home_id || 0,
     homeTeamName: raw.home_name || raw.homeTeam || "",
-    homeTeamImage: raw.home_image || "",
+    homeTeamImage: resolveImageUrl(raw.home_image),
     awayTeamId: raw.awayID || raw.away_id || 0,
     awayTeamName: raw.away_name || raw.awayTeam || "",
-    awayTeamImage: raw.away_image || "",
+    awayTeamImage: resolveImageUrl(raw.away_image),
     date: raw.date_unix ? new Date(raw.date_unix * 1000).toISOString() : raw.date || "",
     dateTimestamp: raw.date_unix || 0,
     status: raw.status || (raw.date_unix * 1000 < Date.now() ? "complete" : "incomplete"),

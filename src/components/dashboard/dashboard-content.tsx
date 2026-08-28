@@ -22,6 +22,9 @@ export function DashboardContent() {
     if (favourites && favourites.length > 0) {
       const firstFav = leagues.find((l) => favourites.includes(l.id));
       if (firstFav) {
+        // Intentional one-time initialization of selection from fetched
+        // preferences; runs once (guarded by prefsApplied) on initial load.
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setSelectedLeague(firstFav);
       }
     }
